@@ -38,9 +38,11 @@ machine = TocMachine(
 app = Flask(__name__, static_url_path="")
 
 
+channel_access_token = "91xFl2RPQAVenKkLweKDwVPlGN0MAQ4/RD2zuqWunfBz7KFSLjGlj6mMpcZqHEmpT+4L89diO5nGokJVzkW7aMO2nrreYfVnhIeUcFgecqpkyl7i01Upe512uLtX5epSUHNJGvZfxlnD9iHjfcwDuQdB04t89/1O/w1cDnyilFU="
+
 # get channel_secret and channel_access_token from your environment variable
-channel_secret = os.getenv("LINE_CHANNEL_SECRET", None)
-channel_access_token = os.getenv("LINE_CHANNEL_ACCESS_TOKEN", None)
+channel_secret = "ffdf310f16f5bd02899f0dc8e3f7e77a"
+
 if channel_secret is None:
     print("Specify LINE_CHANNEL_SECRET as environment variable.")
     sys.exit(1)

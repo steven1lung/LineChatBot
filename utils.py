@@ -4,7 +4,7 @@ from linebot import LineBotApi, WebhookParser
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
 
-channel_access_token = os.getenv("LINE_CHANNEL_ACCESS_TOKEN", None)
+channel_access_token = "91xFl2RPQAVenKkLweKDwVPlGN0MAQ4/RD2zuqWunfBz7KFSLjGlj6mMpcZqHEmpT+4L89diO5nGokJVzkW7aMO2nrreYfVnhIeUcFgecqpkyl7i01Upe512uLtX5epSUHNJGvZfxlnD9iHjfcwDuQdB04t89/1O/w1cDnyilFU="
 
 
 def send_text_message(reply_token, text):
