@@ -14,23 +14,17 @@ load_dotenv()
 
 
 machine = TocMachine(
-    states=["user", "state1", "state2"],
+    states=["user", "state1", "state2","playgame","answeruser","lose","win"],
     transitions=[
-        {
-            "trigger": "advance",
-            "source": "user",
-            "dest": "state1",
-            "conditions": "is_going_to_state1",
-        },
-        {
-            "trigger": "advance",
-            "source": "user",
-            "dest": "state2",
-            "conditions": "is_going_to_state2",
-        },
-        {"trigger": "go_back", "source": ["state1", "state2"], "dest": "user"},
+        {"trigger": "advance","source": "user","dest": "playgame","conditions": "is_going_to_playgame"},
+        {"trigger":"advance","source":"playgame","dest":"answeruser"},
+        {"trigger": "go_back", "source": ["playgame","answeruser","lose","win"], "dest": "user"},
+        {"trigger": "go_back_guess", "source": "answeruser", "dest": "playgame"},
+        {"trigger": "go_to_win", "source": "answeruser", "dest": "win"},
+        {"trigger": "go_to_lose", "source": "answeruser", "dest": "win"},
     ],
     initial="user",
+    queued=True,
     auto_transitions=False,
     show_conditions=True,
 )
@@ -52,7 +46,7 @@ if channel_access_token is None:
 
 line_bot_api = LineBotApi(channel_access_token)
 parser = WebhookParser(channel_secret)
-
+mode = 0
 
 @app.route("/callback", methods=["POST"])
 def callback():
@@ -81,6 +75,7 @@ def callback():
     return "OK"
 
 
+
 @app.route("/webhook", methods=["POST"])
 def webhook_handler():
     signature = request.headers["X-Line-Signature"]
@@ -104,9 +99,20 @@ def webhook_handler():
             continue
         print(f"\nFSM STATE: {machine.state}")
         print(f"REQUEST BODY: \n{body}")
-       # response = machine.advance(event)
-       # if response == False:
-        send_text_message(event.reply_token, "Not Entering any State")
+        
+
+        if event.message.text=='Play':
+            machine.advance(event)       
+            continue
+        elif machine.state=="user" :
+            send_text_message(event.reply_token,"Enter PLAY to play game ! ")
+            continue
+        elif machine.state=='win':
+            send_text_message(event.reply_token,"WIN")
+            machine.go_back();
+            continue
+
+
 
     return "OK"
 

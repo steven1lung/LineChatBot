@@ -31,6 +31,8 @@ class TocMachine(GraphMachine):
         
 
 
+    def on_enter_win(seld,event):
+        send_text_message(event.reply_token,"WIN")
 
 
     def on_enter_answeruser(self, event):
