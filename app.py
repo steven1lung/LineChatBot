@@ -10,18 +10,21 @@ from linebot.models import MessageEvent, TextMessage, TextSendMessage
 from fsm import TocMachine
 from utils import send_text_message
 
+
 load_dotenv()
 
 
 machine = TocMachine(
-    states=["user", "state1", "state2","playgame","answeruser","lose","win"],
+    states=["user", "state1", "state2","playgame","answeruser","lose","win","tell_user","user_answer"],
     transitions=[
         {"trigger": "advance","source": "user","dest": "playgame","conditions": "is_going_to_playgame"},
         {"trigger":"advance","source":"playgame","dest":"answeruser"},
         {"trigger": "go_back", "source": ["playgame","answeruser","lose","win"], "dest": "user"},
         {"trigger": "go_back_guess", "source": "answeruser", "dest": "playgame"},
-        {"trigger": "go_to_win", "source": "answeruser", "dest": "win"},
-        {"trigger": "go_to_lose", "source": "answeruser", "dest": "win"},
+        {"trigger": "go_to_win", "source": "tell_user", "dest": "win"},
+        {"trigger": "go_to_lose", "source": "tell_user", "dest": "lose"},
+        {"trigger": "go_to_game","source": ["answeruser","tell_user"],"dest": "tell_user"},
+        {"trigger": "go_to_answer","source": "tell_user","dest": "user_answer"},
     ],
     initial="user",
     queued=True,
@@ -100,6 +103,8 @@ def webhook_handler():
         print(f"\nFSM STATE: {machine.state}")
         print(f"REQUEST BODY: \n{body}")
         
+        a=b=0 
+        count=0
 
         if event.message.text=='Play':
             machine.advance(event)       
@@ -107,10 +112,24 @@ def webhook_handler():
         elif machine.state=="user" :
             send_text_message(event.reply_token,"Enter PLAY to play game ! ")
             continue
-        elif machine.state=='win':
-            send_text_message(event.reply_token,"WIN\nEnter Play to play again")
-            machine.go_back();
+        elif machine.state=='tell_user':
+            answer=TocMachine.get_ans()
+            guess=list(event.message.text)
+            for i in range(4):
+                if answer[i]==guess[i]:
+                    a+=1
+                elif answer[i] in guess:
+                    b+=1
+            text=("%dA%dB"%(a,b))
+            if count ==20:
+                machine.go_to_lose(event)
+                continue
+            elif a==4:
+                machine.go_to_win(event)
+                continue
+            send_text_message(event.reply_token,text)
             continue
+            
 
 
 
