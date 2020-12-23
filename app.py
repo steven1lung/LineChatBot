@@ -1,5 +1,6 @@
 import os
 import sys
+import random
 
 from flask import Flask, jsonify, request, abort, send_file
 from dotenv import load_dotenv
@@ -8,18 +9,24 @@ from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
 from fsm import TocMachine
-from utils import send_text_message
-
+from utils import send_text_message,send_image_message
 
 load_dotenv()
 
 
 machine = TocMachine(
-    states=["user", "state1", "state2","playgame","answeruser","lose","win","tell_user","user_answer"],
+    states=["user", "state1", "state2","playgame","answeruser","lose","win","tell_user","user_answer","ask","ask2_r","ask2_w","ask3_rr","ask3_rw","ask3_wr","ask3_ww"],
     transitions=[
         {"trigger": "advance","source": "user","dest": "playgame","conditions": "is_going_to_playgame"},
-        {"trigger":"advance","source":"playgame","dest":"answeruser"},
-        {"trigger": "go_back", "source": ["playgame","answeruser","lose","win"], "dest": "user"},
+        {"trigger": "advance","source": "user","dest": "ask","conditions": "is_going_to_ask"},
+        {"trigger": "advance","source":"playgame","dest":"answeruser"},
+        {"trigger": "ask_go","source": "ask","dest": "ask2_r","conditions": "right1"},
+        {"trigger": "ask_go","source": "ask","dest": "ask2_w","conditions": "wrong1"},
+        {"trigger": "ask_go_2","source": "ask2_r","dest": "ask3_rr","conditions": "right2"},
+        {"trigger": "ask_go_2","source": "ask2_r","dest": "ask3_rw","conditions": "wrong2"},
+        {"trigger": "ask_go_2","source": "ask2_w","dest": "ask3_wr","conditions": "right2"},
+        {"trigger": "ask_go_2","source": "ask2_w","dest": "ask3_ww","conditions": "wrong2"},
+        {"trigger": "go_back", "source": ["playgame","answeruser","lose","win","ask","ask3_rr","ask3_rw","ask3_wr","ask3_ww"], "dest": "user"},
         {"trigger": "go_back_guess", "source": "answeruser", "dest": "playgame"},
         {"trigger": "go_to_win", "source": "tell_user", "dest": "win"},
         {"trigger": "go_to_lose", "source": "tell_user", "dest": "lose"},
@@ -116,12 +123,36 @@ def webhook_handler():
         
         if event.message.text=="好難":
             send_text_message(event.reply_token,"這也不會==\n"+str(TocMachine.get_ans()))
+            
+        if event.message.text=="早安":
+            choose = random.randint(0,4)
+            
+            if choose == 0:
+                send_image_message(event.reply_token,"https://i.imgur.com/1WUoYts.jpg")
+            elif choose == 1:
+                send_image_message(event.reply_token,"https://i.imgur.com/Uoc2KuS.jpg")
+            elif choose == 2:
+                send_image_message(event.reply_token,"https://i.imgur.com/mUBO1k0.jpg")
+            elif choose == 3:
+                send_image_message(event.reply_token,"https://i.imgur.com/XzLuVgj.png")
+            elif choose == 4:
+                send_image_message(event.reply_token,"https://i.imgur.com/4CMsVpG.jpg")
+                
 
-        if event.message.text=='Play' and machine.state=="user":
+        if event.message.text.lower()=='play' and machine.state=="user":
             machine.advance(event)       
             continue
+        elif event.message.text.lower()=='test' and machine.state=="user":
+            machine.advance(event)
+            continue
+        elif machine.state=="ask":
+            machine.ask_go(event)
+            continue
+        elif machine.state=='ask2_r' or machine.state=='ask2_w':
+            machine.ask_go_2(event)
+            continue
         elif machine.state=="user" :
-            send_text_message(event.reply_token,"輸入 PLAY 來開始遊戲 ! ")
+            send_text_message(event.reply_token,"輸入 PLAY 來開始遊戲 ! \n或是輸入 TEST 來測測看IQ !")
             continue
         elif machine.state=='tell_user':
             answer=TocMachine.get_ans()

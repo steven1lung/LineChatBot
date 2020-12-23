@@ -1,6 +1,6 @@
 from transitions.extensions import GraphMachine
 
-from utils import send_text_message
+from utils import send_text_message,send_image_message
 
 import random
 
@@ -22,7 +22,58 @@ class TocMachine(GraphMachine):
         text = event.message.text
         return text.lower() == "play"
 
+    def is_going_to_ask(self,event):
+        text = event.message.text
+        return text.lower() == 'test'
 
+    
+    def on_enter_ask(self,event):
+        send_text_message(event.reply_token,"請問 1+1 是多少")
+    
+    
+    def right1(self,event):
+        return event.message.text=='10'
+    
+    
+    def wrong1(self,event):
+        return event.message.text!='10'
+        
+        
+    def right2(self,event):
+        return event.message.text == '大象的左耳' or event.message.text == '大象的左耳朵'
+    
+    def wrong2(self,event):
+        return event.message.text != '大象的左耳' and event.message.text != '大象的左耳朵'
+    
+    def on_enter_ask3_rr(self,event):
+        send_text_message(event.reply_token,"唉呦 不錯嘛\n您的 IQ 是 100")
+        self.go_back()
+    
+    def on_enter_ask3_wr(self,event):
+        send_text_message(event.reply_token,"還過得去歐\n您的 IQ 是 50")
+        self.go_back()
+        
+    def on_enter_ask3_rw(self,event):
+        send_text_message(event.reply_token,"勉強當你是人類...\n您的 IQ 是 5")
+        self.go_back()
+    
+    
+    def on_enter_ask3_ww(self,event):
+        send_text_message(event.reply_token,"很笨嘛\n您的 IQ 是 -100")
+        self.go_back()
+    
+    
+    
+    
+    def on_enter_ask2_r(self,event):
+        send_text_message(event.reply_token,"🈹 太聰明了😎\n那請問你知道什麼東西長得像大象的右耳朵嗎 🤓🤓")
+        
+    
+    def on_enter_ask2_w(self,event):
+        send_text_message(event.reply_token,"笨😅😅😅\n那請問你知道什麼東西長得像大象的右耳朵嗎 🤓🤓")
+        
+    
+    
     def on_exit_user(self,event):
         print("hey here")
         global answer
