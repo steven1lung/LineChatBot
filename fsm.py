@@ -4,6 +4,7 @@ from utils import send_text_message
 
 import random
 
+
 answer=[]
 MAX_GUESS = 10
 guess = []
@@ -21,6 +22,14 @@ class TocMachine(GraphMachine):
         text = event.message.text
         return text.lower() == "play"
 
+    def is_going_to_fuck(self,event):
+        text=event.message.text
+        return text=="幹"
+
+    def on_enter_fuck(self,event):
+        send_text_message(event.reply_token,"幹")
+        self.go_back()
+
     def on_exit_user(self,event):
         print("hey here")
         global answer
@@ -28,7 +37,7 @@ class TocMachine(GraphMachine):
 
     def on_enter_playgame(self,event):
         reply_token=event.reply_token
-        text='Enter a 4-digit number to guess'
+        text='輸入一個4位數的數字'
         send_text_message(reply_token,text)
         print("in playgame")
         self.advance(event)
@@ -59,11 +68,11 @@ class TocMachine(GraphMachine):
 
 
     def on_enter_win(self,event):
-        send_text_message(event.reply_token,"WIN\nEnter play to play again")
+        send_text_message(event.reply_token,"你贏了 ! ! 你好棒><\n輸入 PLAY 可以再玩一次")
         self.go_back()
 
     def on_enter_lose(seld,event):
-        send_text_message(event.reply_token,"LOSE\nEnter play to play again")
+        send_text_message(event.reply_token,"你輸了==\n但沒關係 輸入 PLAY 來雪恥")
         self.go_back()
 
     def on_enter_answeruser(self, event):

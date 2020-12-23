@@ -25,6 +25,7 @@ machine = TocMachine(
         {"trigger": "go_to_lose", "source": "tell_user", "dest": "lose"},
         {"trigger": "go_to_game","source": ["answeruser","tell_user"],"dest": "tell_user"},
         {"trigger": "go_to_answer","source": "tell_user","dest": "user_answer"},
+
     ],
     initial="user",
     queued=True,
@@ -105,12 +106,19 @@ def webhook_handler():
         
         a=b=0 
         count=0
+        
+        
+        if event.message.text=="幹":
+            send_text_message(event.reply_token,"幹")
+            
+        if event.message.text=="笑死":
+            send_text_message(event.reply_token,"笑三小")
 
-        if event.message.text=='Play':
+        if event.message.text=='Play' and machine.state=="user":
             machine.advance(event)       
             continue
         elif machine.state=="user" :
-            send_text_message(event.reply_token,"Enter PLAY to play game ! ")
+            send_text_message(event.reply_token,"輸入 PLAY 來開始遊戲 ! ")
             continue
         elif machine.state=='tell_user':
             answer=TocMachine.get_ans()

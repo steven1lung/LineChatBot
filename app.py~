@@ -15,16 +15,17 @@ load_dotenv()
 
 
 machine = TocMachine(
-    states=["user", "state1", "state2","playgame","answeruser","lose","win","tell_user","user_answer"],
+    states=["user", "state1", "state2","playgame","answeruser","lose","win","tell_user","user_answer","fuck"],
     transitions=[
         {"trigger": "advance","source": "user","dest": "playgame","conditions": "is_going_to_playgame"},
         {"trigger":"advance","source":"playgame","dest":"answeruser"},
-        {"trigger": "go_back", "source": ["playgame","answeruser","lose","win"], "dest": "user"},
+        {"trigger": "go_back", "source": ["playgame","answeruser","lose","win","fuck"], "dest": "user"},
         {"trigger": "go_back_guess", "source": "answeruser", "dest": "playgame"},
         {"trigger": "go_to_win", "source": "tell_user", "dest": "win"},
         {"trigger": "go_to_lose", "source": "tell_user", "dest": "lose"},
         {"trigger": "go_to_game","source": ["answeruser","tell_user"],"dest": "tell_user"},
         {"trigger": "go_to_answer","source": "tell_user","dest": "user_answer"},
+        {"trigger": "advance", "source": "user", "dest": "fuck","conditions":"is_going_to_fuck"},
     ],
     initial="user",
     queued=True,
@@ -111,14 +112,6 @@ def webhook_handler():
             continue
         elif machine.state=="user" :
             send_text_message(event.reply_token,"Enter PLAY to play game ! ")
-            continue
-        elif machine.state=='win':
-            send_text_message(event.reply_token,"WIN\nEnter Play to play again")
-            machine.go_back()
-            continue
-        elif machine.state=='lose':
-            send_text_message(event.reply_token,"LOSE")
-            machine.go_back()
             continue
         elif machine.state=='tell_user':
             answer=TocMachine.get_ans()
