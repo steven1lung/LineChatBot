@@ -1,6 +1,6 @@
 from transitions.extensions import GraphMachine
 
-from utils import send_text_message,send_image_message
+from utils import send_text_message,send_image_message,send_button_message
 
 import random
 
@@ -86,10 +86,7 @@ class TocMachine(GraphMachine):
                 if i == j:
                     continue
                 while answer[i] == answer [j]:
-                    if answer[i]=='9':
-                        answer[i]='0'
-                    else:
-                        answer[i]+='1'
+                    ans[i]=str(random.randint(0,9))
         
         
         
@@ -145,16 +142,7 @@ class TocMachine(GraphMachine):
         
 
 
-        #guess = list(event.message.text)
-       # print(guess)
-        #correct = decide(guess,answer,len(answer))
-       # if correct == len(answer):
-       #     win=True
-
-        #if win:
-        #    self.go_to_win(event)
-       # elif not win:
-       #     self.go_to_lose(event)
+    
 
 
 

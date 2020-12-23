@@ -1,7 +1,7 @@
 import os
 
 from linebot import LineBotApi, WebhookParser
-from linebot.models import MessageEvent, TextMessage, TextSendMessage , ImageSendMessage
+from linebot.models import MessageEvent, TextMessage, TextSendMessage ,  ButtonsTemplate,ImageSendMessage, TemplateSendMessage, MessageTemplateAction
 
 
 channel_access_token = "91xFl2RPQAVenKkLweKDwVPlGN0MAQ4/RD2zuqWunfBz7KFSLjGlj6mMpcZqHEmpT+4L89diO5nGokJVzkW7aMO2nrreYfVnhIeUcFgecqpkyl7i01Upe512uLtX5epSUHNJGvZfxlnD9iHjfcwDuQdB04t89/1O/w1cDnyilFU="
@@ -22,6 +22,23 @@ def send_image_message(reply_token, url):
     line_bot_api.reply_message(reply_token, message)
 
     return "OK"
+
+
+def send_button_message(reply_token, title, text, btn, url):
+    line_bot_api = LineBotApi(channel_access_token)
+    message = TemplateSendMessage(
+        alt_text='button template',
+        template = ButtonsTemplate(
+            title = title,
+            text = text,
+            thumbnail_image_url = url,
+            actions = btn
+        )
+    )
+    line_bot_api.reply_message(reply_token, message)
+
+    return "OK"
+
 
 
 """

@@ -6,10 +6,10 @@ from flask import Flask, jsonify, request, abort, send_file
 from dotenv import load_dotenv
 from linebot import LineBotApi, WebhookParser
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, TextMessage, TextSendMessage
+from linebot.models import MessageEvent, TextMessage, TextSendMessage ,  ButtonsTemplate,ImageSendMessage, TemplateSendMessage, MessageTemplateAction
 
 from fsm import TocMachine
-from utils import send_text_message,send_image_message
+from utils import send_text_message,send_image_message,send_button_message
 
 load_dotenv()
 
@@ -152,14 +152,35 @@ def webhook_handler():
             machine.ask_go_2(event)
             continue
         elif machine.state=="user" :
-            send_text_message(event.reply_token,"輸入 PLAY 來開始遊戲 ! \n或是輸入 TEST 來測測看IQ !")
+            title = '謝謝您將本帥氣機器人加為好友😎 '
+            text = '請問您要做些甚麼'
+            btn = [
+                MessageTemplateAction(
+                    label = '玩遊戲',
+                    text ='play'
+                ),
+                MessageTemplateAction(
+                    label = '測測看IQ',
+                    text = 'test'
+                ),
+            ]
+            url = 'https://i.imgur.com/k8PlFXh.jpg'
+            send_button_message(event.reply_token, title, text, btn, url)
+            #send_text_message(event.reply_token,"謝謝您將本帥氣機器人加為好友😎😎😎\n這裡有一些功能讓您使用\n\n輸入 『PLAY』 來開始遊戲 ! \n或是輸入 『TEST』 來測測看IQ !")
             continue
         elif machine.state=='tell_user':
             answer=TocMachine.get_ans()
-            guess=list(event.message.text)
+            input=event.message.text
+            
+            if not input.isdigit():
+                send_text_message(event.reply_token,"同學...別鬧了...數字...")
+                continue
+            
+            guess=list(input)
             if len(guess) != 4:
                 send_text_message(event.reply_token,"輸入4位數==")
                 continue
+   
             
             
             for i in range(4):
