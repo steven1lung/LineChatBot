@@ -113,6 +113,9 @@ def webhook_handler():
             
         if event.message.text=="笑死":
             send_text_message(event.reply_token,"笑三小")
+        
+        if event.message.text=="好難":
+            send_text_message(event.reply_token,"這也不會==\n"+str(TocMachine.get_ans()))
 
         if event.message.text=='Play' and machine.state=="user":
             machine.advance(event)       
@@ -123,12 +126,18 @@ def webhook_handler():
         elif machine.state=='tell_user':
             answer=TocMachine.get_ans()
             guess=list(event.message.text)
+            if len(guess) != 4:
+                send_text_message(event.reply_token,"輸入4位數==")
+                continue
+            
+            
             for i in range(4):
                 if answer[i]==guess[i]:
                     a+=1
                 elif answer[i] in guess:
                     b+=1
             text=("%dA%dB"%(a,b))
+            count+=1
             if count ==20:
                 machine.go_to_lose(event)
                 continue

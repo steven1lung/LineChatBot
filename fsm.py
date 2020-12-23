@@ -22,18 +22,26 @@ class TocMachine(GraphMachine):
         text = event.message.text
         return text.lower() == "play"
 
-    def is_going_to_fuck(self,event):
-        text=event.message.text
-        return text=="幹"
-
-    def on_enter_fuck(self,event):
-        send_text_message(event.reply_token,"幹")
-        self.go_back()
 
     def on_exit_user(self,event):
         print("hey here")
         global answer
+        
         answer= list(str(random.randint(1000,9999)))
+        tempy=answer
+        
+        for i in range(4):
+            for j in range(4):
+                if i == j:
+                    continue
+                while answer[i] == answer [j]:
+                    if answer[i]=='9':
+                        answer[i]='0'
+                    else:
+                        answer[i]+='1'
+        
+        
+        
 
     def on_enter_playgame(self,event):
         reply_token=event.reply_token
@@ -41,6 +49,8 @@ class TocMachine(GraphMachine):
         send_text_message(reply_token,text)
         print("in playgame")
         self.advance(event)
+        
+
 
 
     def on_enter_tell_user(self,event):
@@ -51,7 +61,7 @@ class TocMachine(GraphMachine):
         reply_token=event.reply_token
         guess=list(event.message.text)
         print(guess)
-        for i in range(3):
+        for i in range(4):
             if answer[i]==guess[i]:
                 a+=1
             elif answer[i] in guess:
@@ -68,7 +78,7 @@ class TocMachine(GraphMachine):
 
 
     def on_enter_win(self,event):
-        send_text_message(event.reply_token,"你贏了 ! ! 你好棒><\n輸入 PLAY 可以再玩一次")
+        send_text_message(event.reply_token,"你運氣很好 ! ! \n輸入 PLAY 可以再賽一次")
         self.go_back()
 
     def on_enter_lose(seld,event):
