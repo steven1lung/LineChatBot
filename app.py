@@ -114,6 +114,8 @@ def webhook_handler():
         a=b=0 
         count=0
         
+        if event.message.text == "fsm":
+            send_image_message(event.reply_token,"")
         
         if event.message.text=="幹":
             send_text_message(event.reply_token,"幹")
