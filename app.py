@@ -15,7 +15,7 @@ load_dotenv()
 
 
 machine = TocMachine(
-    states=["user", "state1", "state2","playgame","answeruser","lose","win","tell_user","user_answer","ask","ask2_r","ask2_w","ask3_rr","ask3_rw","ask3_wr","ask3_ww"],
+    states=["user", "state1", "state2","playgame","answeruser","lose","win","tell_user","user_answer","ask","ask2_r","ask2_w","ask3_rr","ask3_rw","ask3_wr","ask3_ww","morning","fuck"],
     transitions=[
         {"trigger": "advance","source": "user","dest": "playgame","conditions": "is_going_to_playgame"},
         {"trigger": "advance","source": "user","dest": "ask","conditions": "is_going_to_ask"},
