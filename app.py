@@ -116,15 +116,19 @@ def webhook_handler():
         
         if event.message.text == "fsm":
             send_image_message(event.reply_token,"")
+            continue
         
         if event.message.text=="幹":
             send_text_message(event.reply_token,"幹")
+            continue
             
         if event.message.text=="笑死":
             send_text_message(event.reply_token,"笑三小")
+            continue
         
         if event.message.text=="好難":
             send_text_message(event.reply_token,"這也不會==\n"+str(TocMachine.get_ans()))
+            continue
             
         if event.message.text=="早安":
             choose = random.randint(0,4)
@@ -139,6 +143,7 @@ def webhook_handler():
                 send_image_message(event.reply_token,"https://i.imgur.com/XzLuVgj.png")
             elif choose == 4:
                 send_image_message(event.reply_token,"https://i.imgur.com/4CMsVpG.jpg")
+            continue
                 
 
         if event.message.text.lower()=='play' and machine.state=="user":

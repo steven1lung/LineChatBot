@@ -86,7 +86,7 @@ class TocMachine(GraphMachine):
                 if i == j:
                     continue
                 while answer[i] == answer [j]:
-                    ans[i]=str(random.randint(0,9))
+                    answer[i]=str(random.randint(0,9))
         
         
         
